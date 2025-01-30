@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/card"
 import { Snowflake, Leaf, Camera, Share2, RefreshCw, Tag, Heart } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
+import { useLanguage } from "@/lib/languageContext"
 
 interface Item {
   id: string
@@ -26,6 +27,7 @@ const initialItems: Item[] = [
 
 export default function HomePage() {
   const router = useRouter()
+  const { t } = useLanguage()
   const [activeCategory, setActiveCategory] = useState<"fresh" | "frozen" | null>(null)
   const [items, setItems] = useState<Item[]>(initialItems)
 
@@ -37,11 +39,11 @@ export default function HomePage() {
 
   return (
     <Layout activeTab="home">
-      <Header title="Køleskabskammeraten" />
+      <Header title={t('home.title')} />
 
       <div className="p-4 space-y-6">
         <div className="space-y-4">
-          <h2 className="font-medium">Kategorier</h2>
+          <h2 className="font-medium">{t('home.categories')}</h2>
           <div className="flex gap-4">
             <Button
               variant={activeCategory === "fresh" ? "default" : "outline"}
@@ -49,7 +51,7 @@ export default function HomePage() {
               onClick={() => handleCategoryClick("fresh")}
             >
               <Leaf className="text-green-600" />
-              Friskvarer
+              {t('home.fresh')}
             </Button>
             <Button
               variant={activeCategory === "frozen" ? "default" : "outline"}
@@ -57,13 +59,13 @@ export default function HomePage() {
               onClick={() => handleCategoryClick("frozen")}
             >
               <Snowflake className="text-blue-400" />
-              Fryser
+              {t('home.frozen')}
             </Button>
           </div>
         </div>
 
         <div className="space-y-4">
-          <h2 className="font-medium">Ingredienser</h2>
+          <h2 className="font-medium">{t('home.ingredients')}</h2>
           <div className="space-y-3">
             {filteredItems.map((item) => (
               <Card key={item.id} className="p-3 flex items-center gap-3">
@@ -74,7 +76,7 @@ export default function HomePage() {
                 </div>
                 <div className="flex-1">
                   <p className="font-medium">{item.name}</p>
-                  <p className="text-sm text-gray-500">Holder til {item.expiryDate}</p>
+                  <p className="text-sm text-gray-500">{t('home.expiresOn')} {item.expiryDate}</p>
                 </div>
               </Card>
             ))}
@@ -82,40 +84,40 @@ export default function HomePage() {
         </div>
 
         <div className="space-y-4">
-          <h2 className="font-medium">Funktioner</h2>
+          <h2 className="font-medium">{t('home.features')}</h2>
           <div className="grid grid-cols-2 gap-4">
             <Button variant="outline" onClick={() => router.push("/scanner")}>
               <Camera className="mr-2 h-4 w-4" />
-              Smart Scanner
+              {t('home.smartScanner')}
             </Button>
             <Button variant="outline" onClick={() => router.push("/share")}>
               <Share2 className="mr-2 h-4 w-4" />
-              Del Køleskab
+              {t('home.shareKitchen')}
             </Button>
             <Button variant="outline" onClick={() => router.push("/meal-wheel")}>
               <RefreshCw className="mr-2 h-4 w-4" />
-              Måltids-hjulet
+              {t('home.mealWheel')}
             </Button>
             <Button variant="outline" onClick={() => router.push("/deals")}>
               <Tag className="mr-2 h-4 w-4" />
-              Tilbud
+              {t('home.deals')}
             </Button>
             <Button variant="outline" onClick={() => router.push("/donate")}>
               <Heart className="mr-2 h-4 w-4" />
-              Donér Mad
+              {t('home.donateMeal')}
             </Button>
           </div>
         </div>
 
         <div className="space-y-3">
           <Button className="w-full" variant="outline" onClick={() => router.push("/planner")}>
-            Planlæg måltid
+            {t('home.planMeal')}
           </Button>
           <Button className="w-full" variant="outline" onClick={() => router.push("/challenges")}>
-            Start challenge
+            {t('home.startChallenge')}
           </Button>
           <Button className="w-full bg-black text-white hover:bg-black/90" onClick={() => router.push("/inventory")}>
-            Tilføj varer
+            {t('home.addItems')}
           </Button>
         </div>
       </div>

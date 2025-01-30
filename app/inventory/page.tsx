@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Search, Leaf, Snowflake, Plus, Trash } from "lucide-react"
 import { useState } from "react"
+import { useLanguage } from "@/lib/languageContext"
 
 interface Item {
   id: string
@@ -141,6 +142,7 @@ function suggestEmoji(itemName: string): string {
 }
 
 export default function InventoryPage() {
+  const { t } = useLanguage()
   const [items, setItems] = useState<Item[]>(initialItems)
   const [searchTerm, setSearchTerm] = useState("")
   const [activeCategory, setActiveCategory] = useState<"fresh" | "frozen" | null>(null)
@@ -178,21 +180,21 @@ export default function InventoryPage() {
 
   return (
     <Layout activeTab="inventory">
-      <Header title="Lager" backUrl="/" />
+      <Header title={t('inventory.title')} backUrl="/" />
 
       <div className="p-4 space-y-6">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
           <Input
             className="pl-10"
-            placeholder="Søg efter ingredienser"
+            placeholder={t('inventory.search')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
 
         <div className="space-y-4">
-          <h2 className="font-medium">Filter efter kategorier</h2>
+          <h2 className="font-medium">{t('inventory.categories.all')}</h2>
           <div className="flex gap-4">
             <Button
               variant={activeCategory === "fresh" ? "default" : "outline"}
@@ -200,7 +202,7 @@ export default function InventoryPage() {
               onClick={() => handleCategoryClick("fresh")}
             >
               <Leaf className="text-green-600" />
-              Friskvarer
+              {t('inventory.categories.fresh')}
             </Button>
             <Button
               variant={activeCategory === "frozen" ? "default" : "outline"}
@@ -208,13 +210,13 @@ export default function InventoryPage() {
               onClick={() => handleCategoryClick("frozen")}
             >
               <Snowflake className="text-blue-400" />
-              Fryser
+              {t('inventory.categories.frozen')}
             </Button>
           </div>
         </div>
 
         <div className="space-y-4">
-          <h2 className="font-medium">Ingredienser</h2>
+          <h2 className="font-medium">{t('home.ingredients')}</h2>
           <div className="space-y-3">
             {filteredItems.map((item) => (
               <Card key={item.id} className="p-3 flex items-center gap-3">
@@ -236,15 +238,19 @@ export default function InventoryPage() {
         </div>
 
         <div className="space-y-2">
-          <Input placeholder="Varenavn" value={newItemName} onChange={(e) => setNewItemName(e.target.value)} />
+          <Input 
+            placeholder={t('inventory.addNew')} 
+            value={newItemName} 
+            onChange={(e) => setNewItemName(e.target.value)} 
+          />
           <Input
-            placeholder="Mængde (f.eks. 200g, 1l, 5 stk)"
+            placeholder="200g, 1l, 5 stk"
             value={newItemQuantity}
             onChange={(e) => setNewItemQuantity(e.target.value)}
           />
           <Button className="w-full" onClick={handleAddItem}>
             <Plus className="h-4 w-4 mr-2" />
-            Tilføj vare
+            {t('inventory.addNew')}
           </Button>
         </div>
       </div>

@@ -6,28 +6,30 @@ import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Trophy, Medal } from "lucide-react"
 import { useState } from "react"
+import { useLanguage } from "@/lib/languageContext"
 
 interface Challenge {
   id: string
-  title: string
-  description: string
+  titleKey: string
+  descriptionKey: string
   points: number
   completed: boolean
 }
 
 export default function ChallengesPage() {
+  const { t } = useLanguage()
   const [challenges, setChallenges] = useState<Challenge[]>([
     {
       id: "1",
-      title: "Brug kun vare fra fryseren",
-      description: "Lav et måltid kun med ingredienser fra fryseren",
+      titleKey: "challenges.freezerChallenge.title",
+      descriptionKey: "challenges.freezerChallenge.description",
       points: 10,
       completed: false,
     },
     {
       id: "2",
-      title: "Lav et måltid kun med grøntsager",
-      description: "Tilbered en ret udelukkende med grøntsager",
+      titleKey: "challenges.vegetableChallenge.title",
+      descriptionKey: "challenges.vegetableChallenge.description",
       points: 15,
       completed: false,
     },
@@ -46,10 +48,10 @@ export default function ChallengesPage() {
 
   return (
     <Layout activeTab="challenges">
-      <Header title="Mad challenges" backUrl="/" />
+      <Header title={t('challenges.title')} backUrl="/" />
 
       <div className="p-4 space-y-6">
-        <h2 className="font-medium">Challenges List</h2>
+        <h2 className="font-medium">{t('challenges.listTitle')}</h2>
 
         <div className="space-y-4">
           {challenges.map((challenge) => (
@@ -57,33 +59,33 @@ export default function ChallengesPage() {
               <div className="flex items-center gap-3">
                 <Trophy className="text-yellow-500" />
                 <div className="flex-1">
-                  <h3 className="font-medium">{challenge.title}</h3>
-                  <p className="text-sm text-gray-500">{challenge.description}</p>
+                  <h3 className="font-medium">{t(challenge.titleKey)}</h3>
+                  <p className="text-sm text-gray-500">{t(challenge.descriptionKey)}</p>
                 </div>
-                <span className="text-sm font-medium">{challenge.points} points</span>
+                <span className="text-sm font-medium">{challenge.points} {t('challenges.points')}</span>
               </div>
               {!challenge.completed && (
                 <Button className="w-full" onClick={() => completeChallenge(challenge.id)}>
-                  Fuldfør Challenge
+                  {t('challenges.completeButton')}
                 </Button>
               )}
-              {challenge.completed && <p className="text-green-500 text-sm font-medium">✓ Fuldført</p>}
+              {challenge.completed && <p className="text-green-500 text-sm font-medium">{t('challenges.completed')}</p>}
             </Card>
           ))}
         </div>
 
         <div className="space-y-4">
-          <h2 className="font-medium">Pointoversigt and Badges</h2>
+          <h2 className="font-medium">{t('challenges.pointsOverview')}</h2>
           <Card className="p-4">
             <div className="flex items-center gap-3 mb-4">
               <Medal className="text-yellow-500" size={24} />
               <div>
-                <p className="font-medium">Optjente point:</p>
+                <p className="font-medium">{t('challenges.earnedPoints')}</p>
                 <p className="text-2xl font-bold">{totalPoints}</p>
               </div>
             </div>
             <div>
-              <p className="font-medium mb-2">Badges opnået:</p>
+              <p className="font-medium mb-2">{t('challenges.badgesEarned')}</p>
               <p className="text-lg">{Math.floor(totalPoints / 20)}</p>
             </div>
           </Card>

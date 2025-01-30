@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { Home, ShoppingBag, Calendar, Trophy, Settings } from "lucide-react"
+import { useLanguage } from "@/lib/languageContext"
 
 interface LayoutProps {
   children: React.ReactNode
@@ -7,17 +8,19 @@ interface LayoutProps {
 }
 
 export function Layout({ children, activeTab = "home" }: LayoutProps) {
+  const { t } = useLanguage();
+
   return (
     <div className="flex flex-col h-screen max-w-md mx-auto bg-white dark:bg-gray-900">
       <main className="flex-1 overflow-y-auto pb-16">{children}</main>
 
       <nav className="fixed bottom-0 w-full max-w-md border-t bg-white dark:bg-gray-800 dark:border-gray-700">
         <div className="flex justify-around items-center h-16">
-          <NavItem href="/" icon={Home} label="Hjem" isActive={activeTab === "home"} />
-          <NavItem href="/inventory" icon={ShoppingBag} label="Varer" isActive={activeTab === "inventory"} />
-          <NavItem href="/planner" icon={Calendar} label="Planlæg" isActive={activeTab === "planner"} />
-          <NavItem href="/challenges" icon={Trophy} label="Challenges" isActive={activeTab === "challenges"} />
-          <NavItem href="/settings" icon={Settings} label="Indstillinger" isActive={activeTab === "settings"} />
+          <NavItem href="/" icon={Home} label={t('navigation.home')} isActive={activeTab === "home"} />
+          <NavItem href="/inventory" icon={ShoppingBag} label={t('navigation.inventory')} isActive={activeTab === "inventory"} />
+          <NavItem href="/planner" icon={Calendar} label={t('navigation.planner')} isActive={activeTab === "planner"} />
+          <NavItem href="/challenges" icon={Trophy} label={t('navigation.challenges')} isActive={activeTab === "challenges"} />
+          <NavItem href="/settings" icon={Settings} label={t('navigation.settings')} isActive={activeTab === "settings"} />
         </div>
       </nav>
     </div>

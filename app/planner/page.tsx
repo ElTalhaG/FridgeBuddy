@@ -8,10 +8,12 @@ import { Input } from "@/components/ui/input"
 import { useState } from "react"
 import { Plus, Trash, ChevronLeft, ChevronRight } from "lucide-react"
 import { format, addDays, subDays } from "date-fns"
-import { da } from "date-fns/locale"
+import { da, enUS } from "date-fns/locale"
 import type { MealPlan } from "@/types"
+import { useLanguage } from "@/lib/languageContext"
 
 export default function PlannerPage() {
+  const { t, language } = useLanguage()
   const [date, setDate] = useState(new Date())
   const [mealPlans, setMealPlans] = useState<MealPlan[]>([])
   const [newMealTitle, setNewMealTitle] = useState("")
@@ -53,7 +55,7 @@ export default function PlannerPage() {
 
   return (
     <Layout activeTab="planner">
-      <Header title="Planlæg Måltid" />
+      <Header title={t('planner.title')} />
 
       <div className="p-4 space-y-6">
         <Card className="p-4">
@@ -61,7 +63,9 @@ export default function PlannerPage() {
             <Button variant="outline" size="icon" onClick={handlePreviousDay}>
               <ChevronLeft className="h-4 w-4" />
             </Button>
-            <h2 className="text-lg font-semibold">{format(date, "EEEE d. MMMM yyyy", { locale: da })}</h2>
+            <h2 className="text-lg font-semibold">
+              {format(date, "EEEE d. MMMM yyyy", { locale: language === 'da' ? da : enUS })}
+            </h2>
             <Button variant="outline" size="icon" onClick={handleNextDay}>
               <ChevronRight className="h-4 w-4" />
             </Button>
@@ -79,7 +83,11 @@ export default function PlannerPage() {
                 >
                   <div className="flex-1 cursor-pointer" onClick={() => toggleMealCompleted(meal.id)}>
                     <p className="font-medium">{meal.recipe.title}</p>
-                    {meal.completed && <span className="text-green-600 dark:text-green-400 text-sm">✓ Færdig</span>}
+                    {meal.completed && (
+                      <span className="text-green-600 dark:text-green-400 text-sm">
+                        ✓ {t('planner.completed')}
+                      </span>
+                    )}
                   </div>
                   <Button variant="ghost" size="icon" onClick={() => handleDeleteMeal(meal.id)}>
                     <Trash className="h-4 w-4" />
@@ -90,14 +98,14 @@ export default function PlannerPage() {
 
           <div className="flex gap-2">
             <Input
-              placeholder="Tilføj nyt måltid"
+              placeholder={t('planner.addMeal')}
               value={newMealTitle}
               onChange={(e) => setNewMealTitle(e.target.value)}
               className="flex-1"
             />
             <Button onClick={handleAddMeal}>
               <Plus className="h-4 w-4 mr-2" />
-              Tilføj
+              {t('planner.addMeal')}
             </Button>
           </div>
         </Card>
