@@ -30,6 +30,8 @@ export const translations = {
       title: "Mine Varer",
       addNew: "Tilføj ny vare",
       search: "Søg efter varer...",
+      quantity: "Mængde",
+      expiryDate: "Udløbsdato",
       categories: {
         all: "Alle",
         fresh: "Friskvarer",
@@ -40,23 +42,24 @@ export const translations = {
       daysLeft: "dage tilbage",
       expired: "Udløbet",
       today: "I dag",
-      tomorrow: "I morgen"
+      tomorrow: "I morgen",
+      confirmDelete: "Er du sikker på, at du vil slette denne vare?"
     },
     planner: {
       title: "Måltidsplanlægger",
       createNew: "Opret ny plan",
       thisWeek: "Denne uge",
       nextWeek: "Næste uge",
+      addMeal: "Tilføj måltid",
+      completed: "Færdig",
+      selectMealType: "Vælg måltidstype",
+      confirmDelete: "Er du sikker på, at du vil slette dette måltid?",
       mealTypes: {
         breakfast: "Morgenmad",
         lunch: "Frokost",
-        dinner: "Aftensmad",
-        snack: "Snack"
-      },
-      addMeal: "Tilføj måltid",
-      ingredients: "Ingredienser",
-      instructions: "Instruktioner",
-      completed: "Færdig"
+        snack: "Mellemmåltid",
+        dinner: "Aftensmad"
+      }
     },
     challenges: {
       title: "Mad Udfordringer",
@@ -147,6 +150,8 @@ export const translations = {
       title: "My Inventory",
       addNew: "Add new item",
       search: "Search items...",
+      quantity: "Quantity",
+      expiryDate: "Expiry Date",
       categories: {
         all: "All",
         fresh: "Fresh",
@@ -157,23 +162,24 @@ export const translations = {
       daysLeft: "days left",
       expired: "Expired",
       today: "Today",
-      tomorrow: "Tomorrow"
+      tomorrow: "Tomorrow",
+      confirmDelete: "Are you sure you want to delete this item?"
     },
     planner: {
       title: "Meal Planner",
       createNew: "Create new plan",
       thisWeek: "This week",
       nextWeek: "Next week",
+      addMeal: "Add meal",
+      completed: "Completed",
+      selectMealType: "Select meal type",
+      confirmDelete: "Are you sure you want to delete this meal?",
       mealTypes: {
         breakfast: "Breakfast",
         lunch: "Lunch",
-        dinner: "Dinner",
-        snack: "Snack"
-      },
-      addMeal: "Add meal",
-      ingredients: "Ingredients",
-      instructions: "Instructions",
-      completed: "Completed"
+        snack: "Snack",
+        dinner: "Dinner"
+      }
     },
     challenges: {
       title: "Food Challenges",

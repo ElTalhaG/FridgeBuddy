@@ -11,23 +11,24 @@ import { useLanguage } from "@/lib/languageContext"
 
 interface Item {
   id: string
-  name: string
+  nameDA: string
+  nameEN: string
   emoji: string
   expiryDate: string
   category: "fresh" | "frozen"
 }
 
 const initialItems: Item[] = [
-  { id: "1", name: "Tomater", emoji: "🍅", expiryDate: "15/01/25", category: "fresh" },
-  { id: "2", name: "Brød", emoji: "🍞", expiryDate: "15/01/25", category: "fresh" },
-  { id: "3", name: "Kylling", emoji: "🍗", expiryDate: "20/01/25", category: "frozen" },
-  { id: "4", name: "Gulerødder", emoji: "🥕", expiryDate: "18/01/25", category: "fresh" },
-  { id: "5", name: "Is", emoji: "🍦", expiryDate: "30/03/25", category: "frozen" },
+  { id: "1", nameDA: "Tomater", nameEN: "Tomatoes", emoji: "🍅", expiryDate: "15/01/25", category: "fresh" },
+  { id: "2", nameDA: "Brød", nameEN: "Bread", emoji: "🍞", expiryDate: "15/01/25", category: "fresh" },
+  { id: "3", nameDA: "Kylling", nameEN: "Chicken", emoji: "🍗", expiryDate: "20/01/25", category: "frozen" },
+  { id: "4", nameDA: "Gulerødder", nameEN: "Carrots", emoji: "🥕", expiryDate: "18/01/25", category: "fresh" },
+  { id: "5", nameDA: "Is", nameEN: "Ice Cream", emoji: "🍦", expiryDate: "30/03/25", category: "frozen" },
 ]
 
 export default function HomePage() {
   const router = useRouter()
-  const { t } = useLanguage()
+  const { t, language } = useLanguage()
   const [activeCategory, setActiveCategory] = useState<"fresh" | "frozen" | null>(null)
   const [items, setItems] = useState<Item[]>(initialItems)
 
@@ -75,7 +76,7 @@ export default function HomePage() {
                   {item.emoji}
                 </div>
                 <div className="flex-1">
-                  <p className="font-medium">{item.name}</p>
+                  <p className="font-medium">{language === 'da' ? item.nameDA : item.nameEN}</p>
                   <p className="text-sm text-gray-500">{t('home.expiresOn')} {item.expiryDate}</p>
                 </div>
               </Card>

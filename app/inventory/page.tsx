@@ -5,177 +5,54 @@ import { Header } from "@/components/header"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Search, Leaf, Snowflake, Plus, Trash } from "lucide-react"
+import { Search, Leaf, Snowflake, Plus, Trash, Calendar } from "lucide-react"
 import { useState } from "react"
 import { useLanguage } from "@/lib/languageContext"
-
-interface Item {
-  id: string
-  name: string
-  emoji: string
-  quantity: string
-  category: "fresh" | "frozen"
-}
-
-const initialItems: Item[] = [
-  { id: "1", name: "Broccoli", emoji: "🥦", quantity: "500g", category: "fresh" },
-  { id: "2", name: "Kylling", emoji: "🍗", quantity: "1 kg", category: "frozen" },
-  { id: "3", name: "Æg", emoji: "🥚", quantity: "12 stk", category: "fresh" },
-]
-
-const emojiMap: { [key: string]: string } = {
-  // Fruits
-  æble: "🍎",
-  pære: "🍐",
-  appelsin: "🍊",
-  citron: "🍋",
-  banan: "🍌",
-  vindrue: "🍇",
-  vandmelon: "🍉",
-  jordbær: "🍓",
-  kirsebær: "🍒",
-  fersken: "🍑",
-  mango: "🥭",
-  ananas: "🍍",
-  kokosnød: "🥥",
-  kiwi: "🥝",
-  tomat: "🍅",
-  oliven: "🫒",
-  blåbær: "🫐",
-
-  // Vegetables
-  majs: "🌽",
-  broccoli: "🥦",
-  agurk: "🥒",
-  peberfrugt: "🫑",
-  gulerod: "🥕",
-  kartoffel: "🥔",
-  "søde kartofler": "🍠",
-  aubergine: "🍆",
-  salat: "🥬",
-  spinat: "🥬",
-  svampe: "🍄",
-  hvidløg: "🧄",
-  løg: "🧅",
-  ærter: "🫛",
-
-  // Meat & Seafood
-  kylling: "🍗",
-  kød: "🥩",
-  bacon: "🥓",
-  pølse: "🌭",
-  hamburger: "🍔",
-  fisk: "🐟",
-  rejer: "🦐",
-  blæksprutte: "🦑",
-  krabbe: "🦀",
-
-  // Dairy & Eggs
-  æg: "🥚",
-  mælk: "🥛",
-  ost: "🧀",
-  smør: "🧈",
-
-  // Bread & Grains
-  brød: "🍞",
-  croissant: "🥐",
-  bagel: "🥯",
-  pandekager: "🥞",
-  vaffel: "🧇",
-  bolle: "🥖",
-  pretzel: "🥨",
-  ris: "🍚",
-  spaghetti: "🍝",
-
-  // Sweets & Desserts
-  is: "🍦",
-  kage: "🍰",
-  småkage: "🍪",
-  chokolade: "🍫",
-  slik: "🍬",
-  slikkepind: "🍭",
-  donut: "🍩",
-  muffin: "🧁",
-  tærte: "🥧",
-
-  // Drinks
-  kaffe: "☕",
-  te: "🍵",
-  juice: "🧃",
-  smoothie: "🥤",
-  vin: "🍷",
-  øl: "🍺",
-  cocktail: "🍸",
-  vand: "💧",
-
-  // Prepared Foods
-  pizza: "🍕",
-  sandwich: "🥪",
-  taco: "🌮",
-  burrito: "🌯",
-  dumplings: "🥟",
-  suppe: "🥣",
-  salat: "🥗",
-  popcorn: "🍿",
-
-  // Condiments & Spices
-  salt: "🧂",
-  peber: "🌶️",
-  olie: "🫗",
-  eddike: "🧉",
-  "soya sauce": "🍶",
-
-  // Other
-  madpakke: "🍱",
-  gryde: "🍲",
-  "skål med mad": "🥘",
-}
-
-function suggestEmoji(itemName: string): string {
-  const lowercaseName = itemName.toLowerCase()
-  for (const [key, emoji] of Object.entries(emojiMap)) {
-    if (lowercaseName.includes(key) || key.includes(lowercaseName)) {
-      return emoji
-    }
-  }
-  return "🍽️" // Default emoji if no match is found
-}
+import { useInventory } from "@/lib/inventoryContext"
+import { suggestEmoji } from "@/lib/emojiUtils"
+import { format } from "date-fns"
+import { da, enUS } from "date-fns/locale"
 
 export default function InventoryPage() {
-  const { t } = useLanguage()
-  const [items, setItems] = useState<Item[]>(initialItems)
+  const { t, language } = useLanguage()
+  const { items, addItem, deleteItem } = useInventory()
   const [searchTerm, setSearchTerm] = useState("")
   const [activeCategory, setActiveCategory] = useState<"fresh" | "frozen" | null>(null)
   const [newItemName, setNewItemName] = useState("")
   const [newItemQuantity, setNewItemQuantity] = useState("")
+  const [newItemExpiryDate, setNewItemExpiryDate] = useState("")
 
   const handleCategoryClick = (category: "fresh" | "frozen") => {
     setActiveCategory(category === activeCategory ? null : category)
   }
 
-  const filteredItems = items.filter(
-    (item) =>
-      (activeCategory ? item.category === activeCategory : true) &&
-      item.name.toLowerCase().includes(searchTerm.toLowerCase()),
-  )
+  const filteredItems = items.filter((item) => {
+    const matchesCategory = activeCategory ? item.category === activeCategory : true;
+    const itemName = language === 'da' ? item.nameDA : item.nameEN;
+    const matchesSearch = itemName.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
 
   const handleAddItem = () => {
     if (newItemName.trim() && newItemQuantity.trim()) {
-      const newItem: Item = {
-        id: Math.random().toString(),
-        name: newItemName,
-        emoji: suggestEmoji(newItemName),
+      addItem({
+        nameDA: newItemName,
+        nameEN: newItemName, // You might want to add translation functionality here
+        emoji: suggestEmoji(newItemName, language),
         quantity: newItemQuantity,
         category: activeCategory || "fresh",
-      }
-      setItems((prev) => [...prev, newItem])
+        expiryDate: newItemExpiryDate || undefined
+      })
       setNewItemName("")
       setNewItemQuantity("")
+      setNewItemExpiryDate("")
     }
   }
 
   const handleDeleteItem = (id: string) => {
-    setItems((prev) => prev.filter((item) => item.id !== id))
+    if (window.confirm(t('inventory.confirmDelete'))) {
+      deleteItem(id)
+    }
   }
 
   return (
@@ -226,8 +103,16 @@ export default function InventoryPage() {
                   {item.emoji}
                 </div>
                 <div className="flex-1">
-                  <p className="font-medium">{item.name}</p>
-                  <p className="text-sm text-gray-500">{item.quantity}</p>
+                  <p className="font-medium">{language === 'da' ? item.nameDA : item.nameEN}</p>
+                  <div className="flex items-center gap-4 text-sm text-gray-500">
+                    <span>{item.quantity}</span>
+                    {item.expiryDate && (
+                      <span className="flex items-center gap-1">
+                        <Calendar className="h-4 w-4" />
+                        {format(new Date(item.expiryDate), "d. MMM yyyy", { locale: language === 'da' ? da : enUS })}
+                      </span>
+                    )}
+                  </div>
                 </div>
                 <Button variant="ghost" size="icon" onClick={() => handleDeleteItem(item.id)}>
                   <Trash className="h-4 w-4" />
@@ -237,22 +122,48 @@ export default function InventoryPage() {
           </div>
         </div>
 
-        <div className="space-y-2">
-          <Input 
-            placeholder={t('inventory.addNew')} 
-            value={newItemName} 
-            onChange={(e) => setNewItemName(e.target.value)} 
-          />
-          <Input
-            placeholder="200g, 1l, 5 stk"
-            value={newItemQuantity}
-            onChange={(e) => setNewItemQuantity(e.target.value)}
-          />
-          <Button className="w-full" onClick={handleAddItem}>
-            <Plus className="h-4 w-4 mr-2" />
-            {t('inventory.addNew')}
-          </Button>
-        </div>
+        <Card className="p-4">
+          <div className="space-y-3">
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-lg">
+                {suggestEmoji(newItemName, language)}
+              </span>
+              <Input
+                placeholder={t('inventory.addNew')}
+                value={newItemName}
+                onChange={(e) => setNewItemName(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 transform -translate-y-1/2">
+                <Plus className="h-4 w-4 text-gray-400" />
+              </span>
+              <Input
+                placeholder={t('inventory.quantity')}
+                value={newItemQuantity}
+                onChange={(e) => setNewItemQuantity(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 transform -translate-y-1/2">
+                <Calendar className="h-4 w-4 text-gray-400" />
+              </span>
+              <Input
+                type="date"
+                placeholder={t('inventory.expiryDate')}
+                value={newItemExpiryDate}
+                onChange={(e) => setNewItemExpiryDate(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+            <Button className="w-full" onClick={handleAddItem}>
+              <Plus className="h-4 w-4 mr-2" />
+              {t('inventory.addNew')}
+            </Button>
+          </div>
+        </Card>
       </div>
     </Layout>
   )

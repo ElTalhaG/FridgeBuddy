@@ -5,37 +5,21 @@ import { Header } from "@/components/header"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Switch } from "@/components/ui/switch"
-import { useState, useEffect } from "react"
 import { Bell, Moon, Globe, LogOut } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useLanguage } from "@/lib/languageContext"
-
-interface Settings {
-  notifications: boolean
-  darkMode: boolean
-}
+import { useSettings } from "@/lib/settingsContext"
 
 export default function SettingsPage() {
   const { t, language, setLanguage } = useLanguage()
-  const [settings, setSettings] = useState<Settings>({
-    notifications: true,
-    darkMode: false,
-  })
+  const { settings, updateSettings } = useSettings()
 
-  useEffect(() => {
-    const root = window.document.documentElement
-    if (settings.darkMode) {
-      root.classList.add("dark")
-    } else {
-      root.classList.remove("dark")
-    }
-  }, [settings.darkMode])
-
-  const toggleDarkMode = () => {
-    setSettings((prev) => ({ ...prev, darkMode: !prev.darkMode }))
+  const handleSettingChange = (key: 'notifications' | 'darkMode', value: boolean) => {
+    updateSettings(key, value)
   }
 
-  const handleLanguageChange = (value: "da" | "en") => {
+  const handleLanguageChange = (value: 'da' | 'en') => {
+    updateSettings('language', value)
     setLanguage(value)
   }
 
@@ -60,7 +44,7 @@ export default function SettingsPage() {
             </div>
             <Switch
               checked={settings.notifications}
-              onCheckedChange={(checked) => setSettings((prev) => ({ ...prev, notifications: checked }))}
+              onCheckedChange={(checked) => handleSettingChange('notifications', checked)}
             />
           </div>
 
@@ -72,7 +56,10 @@ export default function SettingsPage() {
                 <p className="text-sm text-gray-500">{t('settings.darkModeDesc')}</p>
               </div>
             </div>
-            <Switch checked={settings.darkMode} onCheckedChange={toggleDarkMode} />
+            <Switch
+              checked={settings.darkMode}
+              onCheckedChange={(checked) => handleSettingChange('darkMode', checked)}
+            />
           </div>
 
           <div className="flex items-center justify-between">
@@ -83,7 +70,10 @@ export default function SettingsPage() {
                 <p className="text-sm text-gray-500">{t('settings.languageDesc')}</p>
               </div>
             </div>
-            <Select value={language} onValueChange={handleLanguageChange}>
+            <Select
+              value={settings.language}
+              onValueChange={handleLanguageChange}
+            >
               <SelectTrigger className="w-32">
                 <SelectValue />
               </SelectTrigger>
